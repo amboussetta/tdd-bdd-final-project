@@ -14,12 +14,12 @@
 # limitations under the License.
 ######################################################################
 
+# spell: ignore Rofrano jsonify restx dbname
 """
 Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product
 from service.models import Product, Category
 from service.common import status  # HTTP Status Codes
 from . import app
@@ -86,7 +86,12 @@ def create_products():
 
     message = product.serialize()
 
-
+    #
+    # Uncomment this line of code once you implement READ A PRODUCT
+    #
+    # location_url = url_for("get_products", product_id=product.id, _external=True)
+    location_url = "/"  # delete once READ is implemented
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################
@@ -96,6 +101,7 @@ def create_products():
 ######################################################################
 # LIST PRODUCTS
 ######################################################################
+
 @app.route("/products", methods=["GET"])
 def list_products():
     """Returns a list of Products"""
@@ -103,6 +109,9 @@ def list_products():
 
     products = []
     name = request.args.get("name")
+    category = request.args.get("category")
+    available = request.args.get("available")
+
     if name:
         app.logger.info("Find by name: %s", name)
         products = Product.find_by_name(name)
@@ -115,7 +124,7 @@ def list_products():
         app.logger.info("Find by available: %s", available)
         # create bool from string
         available_value = available.lower() in ["true", "yes", "1"]
-        products = Product.find_by_availability(available_value)        
+        products = Product.find_by_availability(available_value)
     else:
         app.logger.info("Find all")
         products = Product.all()
@@ -140,8 +149,6 @@ def get_products(product_id):
         abort(status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found.")
     app.logger.info("Returning product: %s", product.name)
     return product.serialize(), status.HTTP_200_OK
-
-
 
 ######################################################################
 # U P D A T E   A   P R O D U C T
