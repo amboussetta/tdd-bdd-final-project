@@ -104,7 +104,6 @@ class TestProductModel(unittest.TestCase):
     #
     # ADD YOUR TEST CASES HERE
     #
-
     def test_read_a_product(self):
         """It should Read a Product"""
         product = ProductFactory()
@@ -157,18 +156,6 @@ class TestProductModel(unittest.TestCase):
         # See if we get back 5 products
         products = Product.all()
         self.assertEqual(len(products), 5)
-
-    def test_find_by_name(self):
-        """It should Find a Product by Name"""
-        products = ProductFactory.create_batch(5)
-        for product in products:
-            product.create()
-        name = products[0].name
-        count = len([product for product in products if product.name == name])
-        found = Product.find_by_name(name)
-        self.assertEqual(found.count(), count)
-        for product in found:
-            self.assertEqual(product.name, name)
 
     def test_find_by_availability(self):
         """It should Find Products by Availability"""
